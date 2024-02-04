@@ -1,39 +1,41 @@
 "use client";
 
-import {FC, useState, ChangeEvent, useEffect, useMemo} from "react";
+import {FC, useState, ChangeEvent, useMemo} from "react";
 import {TyperInput} from "../../";
+import styled from "styled-components";
 
-const paragraph = "Watching John with the machine, it was suddenly so clear. The Terminator would never stop, it would never leave him... it would always be there. And it would never hurt him, never shout at him or get drunk and hit him, or say it couldn\'t spend time with him because it was too busy. And it would die to protect him. Of all the would-be fathers who came and went over the years, this thing, this machine, was the only one who measured up. In an insane world, it was the sanest choice.";
-const getParagraphArray = (text: string): string[] => text.split(" ");
+const TyperFC = styled.div`
+  padding: 5px;
+  border: 1px solid ${props => props.theme.primary.text};
+  border-radius: 3px;
+`;
+const TextCorrect = styled.span`
+  background-color: ${props => props.theme.paragraph.correct.bg};
+  color: ${props => props.theme.paragraph.correct.text};
+`;
+const TextWrong = styled.span`
+  background-color: ${props => props.theme.paragraph.error.bg};
+  color: ${props => props.theme.paragraph.error.text};
+`;
+const TextDefault = styled.p`
+  color: ${props => props.theme.paragraph.defaultText};
+`;
 
-const styles = {
-  typer: {
-    padding: "5px",
-    border: "1px solid #fff",
-    borderRadius: "3px",
-  },
-  textCorrect: {
-    backgroundColor: "#0a0",
-  },
-  textWrong: {
-    backgroundColor: "#a00",
-  },
-};
-
-const paragraphArray = getParagraphArray(paragraph);
-
-const Typer: FC = () => {
+const Typer: FC<{
+  text: string;
+}> = ({ text }) => {
   const [typerValue, setTyperValue] = useState<string>("");
   const [wordCurrentIndex, setWordCurrentIndex] = useState<number>(0);
 
+  const paragraphArray = useMemo<string[]>(() => text.split(" "), [text]);
   const getLastSpace = () => wordCurrentIndex ? " " : "";
-  const finishedText = useMemo(() =>
-    `${getParagraphArray(paragraph).slice(0, wordCurrentIndex).join(" ")}${getLastSpace()}`,
+
+  const finishedText = useMemo<string>(() =>
+    `${paragraphArray.slice(0, wordCurrentIndex).join(" ")}${getLastSpace()}`,
     [wordCurrentIndex]
   );
-
-  const currentWord: string = useMemo(() => paragraphArray[wordCurrentIndex], [wordCurrentIndex]);
-  const errorIndexFrom: number | undefined = useMemo(() => {
+  const currentWord: string = useMemo<string>(() => paragraphArray[wordCurrentIndex], [wordCurrentIndex]);
+  const errorIndexFrom: number | undefined = useMemo<number>(() => {
     for (let i = 0; i < typerValue.length; i++) {
       const typerLetter = typerValue[i];
       const currentWordLetter = currentWord[i];
@@ -43,12 +45,12 @@ const Typer: FC = () => {
       }
     }
   }, [typerValue, currentWord]);
-  const typedTextCorrect: string = useMemo(() =>
+  const typedTextCorrect: string = useMemo<string>(() =>
     `${paragraphArray.slice(0, wordCurrentIndex).join(" ")
     }${getLastSpace()}${typerValue.slice(0, errorIndexFrom)}`,
 [wordCurrentIndex, typerValue]);
-  const typedTextWrong: string = useMemo(() =>
-    `${errorIndexFrom >= 0 ? `${paragraph.slice(finishedText.length)}`.slice(
+  const typedTextWrong: string = useMemo<string>(() =>
+    `${errorIndexFrom >= 0 ? `${text.slice(finishedText.length)}`.slice(
       errorIndexFrom,
       errorIndexFrom + (typerValue.length - errorIndexFrom)
     ) : ""
@@ -58,11 +60,11 @@ const Typer: FC = () => {
     if (e) {
       const inputValue = e.target.value;
       const letterTyped = inputValue.slice(inputValue.length - 1);
-      const paragraphArray = getParagraphArray(paragraph);
 
       if (letterTyped === " " && typerValue === currentWord) {
         setTyperValue("");
-        setWordCurrentIndex((value) => value === paragraphArray.length - 1 ?
+        setWordCurrentIndex((value) =>
+          value === paragraphArray.length - 1 ?
           0 :
           value + 1
         );
@@ -74,16 +76,16 @@ const Typer: FC = () => {
 
   const getRenderedParagraph = () => {
     const correctWrongLength = typedTextCorrect.length + typedTextWrong.length;
-    const correctPart = <span style={styles.textCorrect}>{typedTextCorrect}</span>;
-    const wrongPart = <span style={styles.textWrong}>{typedTextWrong}</span>;
+    const correctPart = <TextCorrect>{typedTextCorrect}</TextCorrect>;
+    const wrongPart = <TextWrong>{typedTextWrong}</TextWrong>;
 
-    return <>{correctPart}{wrongPart}{paragraph.slice(correctWrongLength)}</>;
+    return <>{correctPart}{wrongPart}{text.slice(correctWrongLength)}</>;
   };
 
-  return <div style={styles.typer}>
-    <p>{getRenderedParagraph()}</p>
+  return <TyperFC>
+    <TextDefault>{getRenderedParagraph()}</TextDefault>
     <TyperInput value={typerValue} onChange={onChangeHandle} />
-  </div>;
+  </TyperFC>;
 };
 
 export default Typer;
