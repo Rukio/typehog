@@ -1,3 +1,1 @@
-export {
-  default as Typer
-} from "./Typer";
+export { default as Typer } from "./Typer";

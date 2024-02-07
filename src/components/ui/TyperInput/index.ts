@@ -1,3 +1,3 @@
 export {
-  default as TyperInput
+	default as TyperInput,
 } from "./TyperInput";
