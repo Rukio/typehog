@@ -4,7 +4,7 @@ import {FC} from "react";
 import styled from "styled-components";
 import { Link } from "../Link";
 import {getTheme} from "../../../utils/styled";
-import {User} from "../../../lib/types";
+import {UserProfile} from "../../../lib/types";
 
 const HeaderAuthFC = styled.div`
 	padding: 10px;
@@ -23,18 +23,25 @@ const HeaderProfile = styled.div`
 	padding: 5px;
 `;
 
-const HeaderAuth: FC<{ user: User }> = ({
+const HeaderAuth: FC<{
+	user: UserProfile;
+	onOpenLogin: () => void;
+	onOpenRegister: () => void;
+}> = ({
 	user,
+	onOpenLogin,
+	onOpenRegister,
 }) => {
-	console.log(user);
 	return <HeaderAuthFC>
-		<AuthLinks>
-			<Link onClick={() => { console.log("ok"); }}>Login</Link>
-			<Link onClick={() => { console.log("ok"); }}>Register</Link>
-		</AuthLinks>
-		<HeaderProfile>
-			<Link onClick={() => { console.log("ok"); }}>Rukio</Link>
-		</HeaderProfile>
+		{
+			user ? <HeaderProfile>
+				<Link onClick={() => { console.log("ok"); }}>{user.name}</Link>
+			</HeaderProfile> :
+				<AuthLinks>
+					<Link onClick={() => onOpenLogin()}>Login</Link>
+					<Link onClick={() => onOpenRegister()}>Register</Link>
+				</AuthLinks>
+		}
 	</HeaderAuthFC>;
 };
 

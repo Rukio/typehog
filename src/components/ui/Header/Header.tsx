@@ -1,19 +1,15 @@
 "use client";
 
 import {FC, useEffect} from "react";
-import { useSelector } from "react-redux";
 import styled from "styled-components";
 import {getTheme} from "../../../utils/styled";
 import HeaderAuth from "../../ui/Header/HeaderAuth";
-import {useAppDispatch} from "../../../lib/hooks";
-import { useAppSelector } from "../../../lib/hooks";
-import {AUTH_FEATURE_KEY} from "../../../lib/features/auth/manageAuth.slice";
+import {useAppDispatch, useAppSelector} from "../../../lib/hooks";
 import {
-	MODALS_FEATURE_KEY,
-	selectIsLoginModalActiveState,
 	setIsLoginModalActive,
+	setIsRegisterModalActive,
 } from "../../../lib/features/modals/manageModals.slice";
-import { useGetParagraphsQuery, selectDomainParagraphs } from "../../../lib/domain/paragraphsSlice/paragraphs.slice";
+import { useGetParagraphsQuery, selectProfile } from "../../../lib/domain";
 
 const HeaderFC = styled.header`
 	display: flex;
@@ -28,15 +24,27 @@ const HeaderFC = styled.header`
 `;
 
 const Header: FC = () => {
-	useGetParagraphsQuery();
-	const user = useAppSelector(state => state[AUTH_FEATURE_KEY].user);
-	const isLoginActive = useAppSelector(state => state[MODALS_FEATURE_KEY].isLoginModalActive);
-	const paragraphs = useSelector(selectDomainParagraphs);
-	const isLoginActiveSelector = useSelector(selectIsLoginModalActiveState);
 	const dispatch = useAppDispatch();
 
+	useGetParagraphsQuery();
+
+	const { data: user } = useAppSelector(selectProfile);
+
+	useEffect(() => console.log(user), [user]);
+
+	const handleOpenLogin = () => {
+		dispatch(setIsLoginModalActive(true));
+	};
+	const handleOpenRegister = () => {
+		dispatch(setIsRegisterModalActive(true));
+	};
+
 	return <HeaderFC>
-		<HeaderAuth user={user}/>
+		<HeaderAuth
+			user={user}
+			onOpenLogin={handleOpenLogin}
+			onOpenRegister={handleOpenRegister}
+		/>
 	</HeaderFC>;
 };
 

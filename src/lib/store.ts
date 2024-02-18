@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { manageAuthSlice, AUTH_FEATURE_KEY } from "./features/auth/manageAuth.slice";
-import {apiSlice, API_SLICE_KEY} from "./domain/apiSlice";
+import {apiSlice} from "./domain/apiSlice";
 import {manageModalsSlice, MODALS_FEATURE_KEY} from "./features/modals/manageModals.slice";
 
 export const makeStore = () => {

@@ -29,7 +29,7 @@ const ModalBody = styled(Block)`
 
 const Modal: FC<{
 	isActive: boolean;
-	setActive: (isActive: boolean) => void
+	setActive: (isActive?: boolean) => void
 }> = ({isActive, setActive, children}) => {
 	return <Overlay
 		$isActive={isActive}

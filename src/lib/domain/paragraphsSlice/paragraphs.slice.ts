@@ -11,5 +11,5 @@ const paragraphsSlice = apiSlice.injectEndpoints({
 	}),
 });
 
-export const selectDomainParagraphs = paragraphsSlice.endpoints.getParagraphs.select();
+export const selectParagraphs = paragraphsSlice.endpoints.getParagraphs.select();
 export const { useGetParagraphsQuery } = paragraphsSlice;

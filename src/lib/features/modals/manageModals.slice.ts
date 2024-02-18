@@ -9,9 +9,9 @@ export interface ModalsState {
 }
 
 const manageModalsInitialState = {
-	isLoginModalActive: true,
+	isLoginModalActive: false,
 	isRegisterModalActive: false,
-} as ModalsState;
+};
 
 export const manageModalsSlice = createSlice({
 	name: MODALS_FEATURE_KEY,
@@ -21,7 +21,7 @@ export const manageModalsSlice = createSlice({
 			state.isLoginModalActive = action.payload;
 		},
 		setIsRegisterModalActive(state, action: PayloadAction<ModalsState["isRegisterModalActive"]>) {
-			state.isLoginModalActive = action.payload;
+			state.isRegisterModalActive = action.payload;
 		},
 	},
 });
@@ -38,5 +38,5 @@ export const selectIsLoginModalActiveState = createSelector(
 );
 export const selectIsRegisterModalActiveState = createSelector(
 	selectModalsState,
-	(modalsState: ModalsState) => modalsState.isLoginModalActive
+	(modalsState: ModalsState) => modalsState.isRegisterModalActive
 );

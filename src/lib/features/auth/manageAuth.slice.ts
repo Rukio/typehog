@@ -1,27 +1,36 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "../../store";
-import { User } from "../../types";
+import {getCookie} from "cookies-next";
+import {createSelector, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import type {RootState} from "../../store";
+import {TOKEN_KEY} from "../../constants";
 
 export const AUTH_FEATURE_KEY = "auth";
 
 export interface AuthState {
-	user?: User;
-	authToken?: string;
+	token?: string;
 }
 
 const initialState: AuthState = {};
+
+const token: string | undefined = getCookie(TOKEN_KEY);
+
+if (token) {
+	initialState.token = token;
+}
 
 export const manageAuthSlice = createSlice({
 	name: AUTH_FEATURE_KEY,
 	initialState,
 	reducers: {
-		setAuthToken(state, action: PayloadAction<AuthState["authToken"]>) {
-			state.authToken = action.payload;
-		},
-		setUser(state, action: PayloadAction<AuthState["user"]>) {
-			state.user = action.payload;
+		setToken(state, action: PayloadAction<AuthState["token"]>) {
+			state.token = action.payload;
 		},
 	},
 });
 
-export const { setAuthToken, setUser } = manageAuthSlice.actions;
+export const { setToken } = manageAuthSlice.actions;
+
+export const selectAuthState = (state: RootState) => state[AUTH_FEATURE_KEY];
+export const selectTokenState = createSelector(
+	selectAuthState,
+	(authState: AuthState) => authState.token
+);

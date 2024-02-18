@@ -1,16 +1,27 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { RootState } from "../../store";
+import {BASE_URL} from "../../constants";
+import {AUTH_FEATURE_KEY} from "@/lib/features/auth/manageAuth.slice";
 
-const BASE_URL = "http://localhost:3001/v1/";
 export const API_SLICE_KEY = "api";
 
 export const apiSlice = createApi({
 	reducerPath: API_SLICE_KEY,
 	baseQuery: fetchBaseQuery({
 		baseUrl: BASE_URL,
-	}),
-	endpoints: () => ({
+		prepareHeaders: (
+			headers, { getState }
+		) => {
+			const token = (getState() as RootState)[AUTH_FEATURE_KEY].token;
 
+			if (token) {
+				headers.set("authorization", `Bearer ${token}`);
+			}
+
+			return headers;
+		},
 	}),
+	endpoints: () => ({}),
 });
 
 export const { middleware } = apiSlice;

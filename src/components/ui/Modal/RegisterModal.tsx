@@ -1,11 +1,11 @@
 import {ChangeEvent, FC, FormEvent, useState} from "react";
-import { setCookie, deleteCookie } from "cookies-next";
+import {setCookie} from "cookies-next";
 import Modal from "./Modal";
 import {useSelector} from "react-redux";
-import {useLoginMutation} from "../../../lib/domain";
+import {useRegistrationMutation} from "../../../lib/domain";
 import {
-	selectIsLoginModalActiveState,
-	setIsLoginModalActive,
+	selectIsRegisterModalActiveState,
+	setIsRegisterModalActive,
 	setToken,
 } from "../../../lib/features";
 import {useAppDispatch} from "../../../lib/hooks";
@@ -14,23 +14,25 @@ import {Input} from "../Form";
 import {Block} from "../Block";
 import {Button} from "../Button";
 
-interface LoginForm {
+interface RegisterForm {
+	name: string;
 	email: string;
 	password: string;
 }
 
-const LoginModal: FC = () => {
+const RegisterModal: FC = () => {
 	const dispatch = useAppDispatch();
-	const isActive = useSelector(selectIsLoginModalActiveState);
-	const [form, setForm] = useState<LoginForm>({
+	const isActive = useSelector(selectIsRegisterModalActiveState);
+	const [form, setForm] = useState<RegisterForm>({
+		name: "",
 		email: "",
 		password: "",
 	});
 
-	const [login] = useLoginMutation();
+	const [register] = useRegistrationMutation();
 
 	const handleClose = () => {
-		dispatch(setIsLoginModalActive(false));
+		dispatch(setIsRegisterModalActive(false));
 	};
 
 	const onFormChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -43,15 +45,12 @@ const LoginModal: FC = () => {
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		const {data, error} = await login({
+		const {data, error} = await register({
+			name: form.name,
 			email: form.email,
 			password: form.password,
 		});
 		const token = data?.token;
-
-		if (error) {
-			deleteCookie(TOKEN_KEY);
-		}
 
 		if (token) {
 			setCookie(TOKEN_KEY, token);
@@ -76,6 +75,14 @@ const LoginModal: FC = () => {
 			</Block>
 			<Block>
 				<Input
+					name="name"
+					placeholder="Name"
+					type="text"
+					onChange={onFormChange}
+				/>
+			</Block>
+			<Block>
+				<Input
 					name="password"
 					placeholder="Password"
 					type="password"
@@ -89,4 +96,4 @@ const LoginModal: FC = () => {
 	</Modal>;
 };
 
-export default LoginModal;
+export default RegisterModal;
