@@ -1,5 +1,5 @@
-import {SystemId, Timestamps} from "@/lib/types/common.types";
-import {RoleDomain} from "@/lib/types/auth.types";
+import {SystemId, Timestamps} from "../types/common.types";
+import {RoleDomain} from "../types/auth.types";
 
 export interface UserProfile extends SystemId, Timestamps {
 	email: string;
